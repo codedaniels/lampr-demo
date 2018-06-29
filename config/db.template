@@ -1,0 +1,9 @@
+<?php
+
+$db_cred = [
+    'host' => '<DATABASE HOST>',
+    // keep as localhost b/c AWS MySQL is running on the AWS Ubuntu Server
+    'user' => '<DATABASE USER>',
+    'password' => '<DATABASE PASSWORD>',
+    'database' => '<DATABASE NAME>'
+];

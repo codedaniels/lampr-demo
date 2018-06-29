@@ -3,6 +3,8 @@ import axios from 'axios';
 import Item from './item';
 import Input from './input';
 import './list.css';
+import {formatPostData} from '../../helpers';
+import { format } from 'util';
 
 class ToDoList extends Component {
     constructor(props) {
@@ -24,13 +26,63 @@ class ToDoList extends Component {
         this.deleteItem = this.deleteItem.bind(this);
     }
 
-    componentWillMount() {
+    async componentDidMount() {
         this.getListData();
+
+        // const getData = {
+        //     key: 'something different',
+        //     name: 'Daniel',
+        //     age: '38'
+        // };
+
+        // for GET DATA 
+        // const resp = await axios.get('/api/to_do_list.php', {
+        //     params: getData
+        // });
+
+
+        // for POST DATA
+            // long not so good way way
+        // const postData = new URLSearchParams();
+        // postData.append('key','some value');
+        // postData.append('name','Daniel');
+        // postData.append('age','38');
+
+        //     // better way to do POST
+        // const postData = formatPostData(getData);
+        // const resp = await axios.get('/api/to_do_list.php', {
+        //     params: {action: 'get_to_do_list'}
+        // });
+        // console.log ('Get Resp: ', resp);
+
+        // const resp = await axios.post('api/to_do_list.php', postData, {
+        //     params: {
+        //         get: 'this is get data',
+        //         name: 'Steve',
+        //         age: 43
+        //     }
+        // });
+
+        // console.log ('Post Resp', resp)
+
+        // const postData = formatPostData(getData);
+
+        // const resp = await axios.patch('api/to_do_list.php', getData);
+
+        // console.log ('Post Resp', resp)
+
+
+
+
     }
 
     async getListData() {
         // Use get request to get list data
-        const response = { data: {}}; // Remove
+        // const response = { data: {}}; // Remove
+
+        const response = await axios.get('/api/to_do_list.php', {
+            params: { action: 'get_to_do_list'}
+        });
 
         const { message, listItems } = response.data;
 
@@ -52,7 +104,12 @@ class ToDoList extends Component {
 
     async deleteItem(id) {
         // Use delete method to delete a to do item based on ID
-
+        await axios.delete('/api/to_do_list.php', {
+            params: {
+                action: 'delete_item', 
+                id: id
+            }
+        });
         this.getListData();
     }
 
@@ -60,7 +117,15 @@ class ToDoList extends Component {
         e.preventDefault();
         // Item @ this.state.newItem
         // Use post method to send new item to DB
-        const response = {data: {success: true}}; // Remove
+        // const response = {data: {success: true}}; // Remove
+
+        const newItem = formatPostData(this.state.newItem);
+
+        const response = await axios.post('/api/to_do_list.php', newItem, {
+            params: {
+                action: 'save_item'
+            }
+        })
 
         const { errors, success } = response.data;
 
@@ -97,6 +162,11 @@ class ToDoList extends Component {
         };
 
         // Use patch request to update item based on id
+        await axios.patch('/api/to_do_list.php', dataToSend, {
+            params:{
+                action: 'change_complete'
+            }
+        });
 
         this.getListData();
     }
